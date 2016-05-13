@@ -11,12 +11,12 @@ import pantalla.Pantalla;
 
 public class Juego {
 	private List<Carta> mazo;
-	private List<Carta> mano;
+	private Mano mano;
 	private Pantalla pt;
 	
 	Juego() {
 		mazo = new ArrayList<Carta>();
-		mano = new ArrayList<Carta>();
+		mano = new Mano();
 		crearMazo();
 		barajar();
 		pt = new Pantalla(this);
@@ -48,7 +48,7 @@ public class Juego {
 		return mazo;
 	}
 	
-	public List<Carta> getMano() {
+	public Mano getMano() {
 		return mano;
 	}
 	

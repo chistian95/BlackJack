@@ -28,13 +28,15 @@ public class Pantalla extends JFrame implements MouseListener, KeyListener {
 	private Juego jg;
 	private List<Boton> botones;
 	private BufferedImage bf;
+	private boolean terminado;
 
 	public Pantalla(Juego jg) {
 		this.jg = jg;
 		botones = new ArrayList<Boton>();
+		terminado = false;
 		
 		setUndecorated(true);
-        setSize(1280, 720);
+        setSize(720, 480);
         setLocationRelativeTo(null);
         setVisible(true);
         
@@ -65,8 +67,8 @@ public class Pantalla extends JFrame implements MouseListener, KeyListener {
 			bff.drawRect(x1, y1, 32, 48);
 		}
 		
-		for(int i=0; i<jg.getMano().size(); i++) {
-			Carta c = jg.getMano().get(i);
+		for(int i=0; i<jg.getMano().getCartas().size(); i++) {
+			Carta c = jg.getMano().getCartas().get(i);
 			int x1 = getWidth()/2-128 + 34*i;
 			int y1 = getHeight()/2 + 64;
 			bff.setColor(Color.WHITE);
@@ -82,9 +84,16 @@ public class Pantalla extends JFrame implements MouseListener, KeyListener {
 			bff.setColor(Color.BLACK);
 			bff.drawRect(x1, y1, 32, 48);
 		}
+		
+		bff.setColor(Color.WHITE);
+		bff.setFont(fuente);
+		bff.drawString(jg.getMano().getPuntos()+"", getWidth()/2 - 150, getHeight()/2);
 				
 		for(Boton boton : botones) {
 			bff.setColor(new Color(0, 0, 126));
+			if(terminado) {
+				bff.setColor(new Color(64, 64, 64));
+			}			
 			bff.fillRect(boton.getX(), boton.getY(), boton.getDX(), boton.getDY());
 			bff.setColor(Color.BLACK);
 			bff.drawRect(boton.getX(), boton.getY(), boton.getDX(), boton.getDY());
@@ -92,16 +101,29 @@ public class Pantalla extends JFrame implements MouseListener, KeyListener {
 			bff.setFont(fuente);
 			bff.drawString(boton.getAccion(), boton.getX()+16, boton.getY()+20);
 		}
+		
+		if(terminado) {
+			bff.setColor(Color.WHITE);
+			bff.setFont(fuente);
+			if(jg.getMano().getPuntos() > 21) {
+				bff.drawString("Has perdido!", getWidth()/2-50, getHeight()/2-150);
+			} else {
+				bff.drawString("Has ganado!", getWidth()/2-50, getHeight()/2-150);
+			}
+		}
 				
 		g.drawImage(bf, 0, 0, null);
 	}
 	
 	private void pulsarBoton(Boton b) {
-		if(b.getAccion().equals("REPARTIR")) {
+		if(!terminado && b.getAccion().equals("REPARTIR")) {
 			int rnd = (int) (Math.random()*jg.getMazo().size());
 			Carta c = jg.getMazo().get(rnd);
 			jg.getMazo().remove(rnd);
-			jg.getMano().add(c);
+			jg.getMano().getCartas().add(c);
+			if(jg.getMano().getPuntos() >= 21) {
+				terminado = true;
+			}
 			repaint();
 		}
 	}
