@@ -23,7 +23,7 @@ import principal.Juego;
 
 public class Pantalla extends JFrame implements MouseListener, KeyListener {
 	private static final long serialVersionUID = 1L;
-	private static final Font fuente = new Font("Verdana", Font.BOLD, 14);
+	private static final Font fuente = new Font("Arial", Font.BOLD, 14);
 	
 	private Juego jg;
 	private List<Boton> botones;
@@ -57,9 +57,10 @@ public class Pantalla extends JFrame implements MouseListener, KeyListener {
 		Graphics2D bff = (Graphics2D) bf.getGraphics();
 		bff.setColor(new Color(0, 126, 0));
 		bff.fillRect(0, 0, getWidth(), getHeight());
+		bff.setFont(fuente);
 
 		for(int i=0; i<jg.getMazo().size(); i++) {
-			int x1 = getWidth()/2-16;
+			int x1 = getWidth()/2+48;
 			int y1 = getHeight()/2-(2*i);
 			bff.setColor(new Color(126, 0, 0));			
 			bff.fillRect(x1, y1, 32, 48);
@@ -75,11 +76,21 @@ public class Pantalla extends JFrame implements MouseListener, KeyListener {
 			bff.fillRect(x1, y1, 32, 48);
 			
 			bff.setColor(Color.BLACK);
-			bff.drawString(Numero.NUMEROS[c.getNumero()], x1+6, y1+24);
+			bff.drawString(Numero.NUMEROS[c.getNumero()], x1+12, y1+24);
 			if(c.getPalo() >= 2) {
 				bff.setColor(Color.RED);
 			}
-			bff.drawString(Palo.SIMBOLOS[c.getPalo()], x1+16, y1+24);
+			bff.drawString(Palo.SIMBOLOS[c.getPalo()], x1+12, y1+34);
+			
+			bff.setColor(Color.BLACK);
+			bff.drawRect(x1, y1, 32, 48);
+		}
+		
+		for(int i=0; i<jg.getCasa().getCartas().size(); i++) {
+			int x1 = getWidth()/2-128 + 34*i;
+			int y1 = getHeight()/2-200 + 64;
+			bff.setColor(new Color(126, 0, 0));
+			bff.fillRect(x1, y1, 32, 48);
 			
 			bff.setColor(Color.BLACK);
 			bff.drawRect(x1, y1, 32, 48);
@@ -87,7 +98,7 @@ public class Pantalla extends JFrame implements MouseListener, KeyListener {
 		
 		bff.setColor(Color.WHITE);
 		bff.setFont(fuente);
-		bff.drawString(jg.getMano().getPuntos()+"", getWidth()/2 - 150, getHeight()/2);
+		bff.drawString(jg.getMano().getPuntos()+"", getWidth()/2 - 150, getHeight()/2+64);
 				
 		for(Boton boton : botones) {
 			bff.setColor(new Color(0, 0, 126));
@@ -102,17 +113,54 @@ public class Pantalla extends JFrame implements MouseListener, KeyListener {
 			bff.drawString(boton.getAccion(), boton.getX()+16, boton.getY()+20);
 		}
 		
-		if(terminado) {
+		if(terminado) {		
+			turnoCasa();
+			
+			for(int i=0; i<jg.getCasa().getCartas().size(); i++) {
+				Carta c = jg.getCasa().getCartas().get(i);
+				int x1 = getWidth()/2-128 + 34*i;
+				int y1 = getHeight()/2-200 + 64;
+				bff.setColor(Color.WHITE);
+				bff.fillRect(x1, y1, 32, 48);
+				
+				bff.setColor(Color.BLACK);
+				bff.drawString(Numero.NUMEROS[c.getNumero()], x1+12, y1+24);
+				if(c.getPalo() >= 2) {
+					bff.setColor(Color.RED);
+				}
+				bff.drawString(Palo.SIMBOLOS[c.getPalo()], x1+12, y1+34);
+				
+				bff.setColor(Color.BLACK);
+				bff.drawRect(x1, y1, 32, 48);
+			}
+			
 			bff.setColor(Color.WHITE);
 			bff.setFont(fuente);
-			if(jg.getMano().getPuntos() > 21) {
+			bff.drawString(jg.getCasa().getPuntos()+"", getWidth()/2 - 150, getHeight()/2-200+64);
+			
+			bff.setColor(Color.WHITE);
+			bff.setFont(fuente);
+			if(jg.getMano().getPuntos() > 21 || jg.getMano().getPuntos() < jg.getCasa().getPuntos()) {
 				bff.drawString("Has perdido!", getWidth()/2-50, getHeight()/2-150);
 			} else {
 				bff.drawString("Has ganado!", getWidth()/2-50, getHeight()/2-150);
 			}
 		}
-				
+			
 		g.drawImage(bf, 0, 0, null);
+	}
+	
+	private boolean turnoCasa() {
+		boolean res = false;
+		if(jg.getCasa().getPuntos() < 16) {
+			int rnd = (int) (Math.random()*jg.getMazo().size());
+			Carta c = jg.getMazo().get(rnd);
+			jg.getMazo().remove(rnd);
+			jg.getCasa().getCartas().add(c);
+			res = true;
+		}		
+		repaint();
+		return res;
 	}
 	
 	private void pulsarBoton(Boton b) {
@@ -123,9 +171,11 @@ public class Pantalla extends JFrame implements MouseListener, KeyListener {
 			jg.getMano().getCartas().add(c);
 			if(jg.getMano().getPuntos() >= 21) {
 				terminado = true;
-			}
-			repaint();
+			}			
+		} else if(!terminado && b.getAccion().equals("PLANTARSE")) {
+			terminado = true;
 		}
+		turnoCasa();		
 	}
 	
 	public void meterBoton(Boton boton) {

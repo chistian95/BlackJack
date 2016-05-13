@@ -11,18 +11,22 @@ import pantalla.Pantalla;
 
 public class Juego {
 	private List<Carta> mazo;
-	private Mano mano;
+	private Jugador mano;
+	private Jugador casa;
 	private Pantalla pt;
 	
 	Juego() {
 		mazo = new ArrayList<Carta>();
-		mano = new Mano();
+		mano = new Jugador();
+		casa = new Jugador();
 		crearMazo();
 		barajar();
 		pt = new Pantalla(this);
 		
 		Boton boton = new Boton(pt.getWidth()/2+200, pt.getHeight()/2, 110, 30, "REPARTIR");
+		Boton boton2 = new Boton(pt.getWidth()/2+200, pt.getHeight()/2-60, 115, 30, "PLANTARSE");
 		pt.meterBoton(boton);
+		pt.meterBoton(boton2);
 	}
 	
 	private void crearMazo() {
@@ -48,8 +52,12 @@ public class Juego {
 		return mazo;
 	}
 	
-	public Mano getMano() {
+	public Jugador getMano() {
 		return mano;
+	}
+	
+	public Jugador getCasa() {
+		return casa;
 	}
 	
 	public static void main(String[] args) {

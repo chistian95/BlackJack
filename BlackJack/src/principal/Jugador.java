@@ -6,10 +6,10 @@ import java.util.List;
 import carta.Carta;
 import carta.Numero;
 
-public class Mano {
+public class Jugador {
 	private List<Carta> cartas;
 	
-	public Mano() {
+	public Jugador() {
 		cartas = new ArrayList<Carta>();
 	}
 	

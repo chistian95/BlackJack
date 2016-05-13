@@ -6,6 +6,6 @@ public class Palo {
 	};
 	
 	public static final String[] SIMBOLOS = {
-		"♣", "♠", "♦", "♥"	
+		"♣", "♠", "♦", "♥"
 	};
 }

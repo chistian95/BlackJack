@@ -1,2 +1,8 @@
 eclipse.preferences.version=1
+encoding//src/carta/Carta.java=UTF-8
+encoding//src/carta/Numero.java=UTF-8
 encoding//src/carta/Palo.java=UTF-8
+encoding//src/pantalla/Boton.java=UTF-8
+encoding//src/pantalla/Pantalla.java=UTF-8
+encoding//src/principal/Juego.java=UTF-8
+encoding//src/principal/Jugador.java=UTF-8
