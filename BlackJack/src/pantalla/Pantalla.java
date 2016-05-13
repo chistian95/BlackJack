@@ -140,7 +140,9 @@ public class Pantalla extends JFrame implements MouseListener, KeyListener {
 			
 			bff.setColor(Color.WHITE);
 			bff.setFont(fuente);
-			if(jg.getMano().getPuntos() > 21 || jg.getMano().getPuntos() < jg.getCasa().getPuntos()) {
+			if(jg.getMano().getPuntos() > 21) {
+				bff.drawString("Has perdido!", getWidth()/2-50, getHeight()/2-150);
+			} else if(jg.getMano().getPuntos() <= jg.getCasa().getPuntos() && jg.getCasa().getPuntos() <= 21) {
 				bff.drawString("Has perdido!", getWidth()/2-50, getHeight()/2-150);
 			} else {
 				bff.drawString("Has ganado!", getWidth()/2-50, getHeight()/2-150);
