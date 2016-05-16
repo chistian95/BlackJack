@@ -77,17 +77,13 @@ public class Pantalla extends JFrame implements MouseListener, KeyListener {
 			bff.setColor(Color.BLACK);
 			bff.drawRect(x1, y1, 32, 48);
 		}		
-		
-		//Animar las cartas
-		for(Animacion anim : animaciones) {			
-			bff.setColor(new Color(126, 0, 0));
-			bff.fillRect(anim.getX(), anim.getY(), 32, 48);
-			bff.setColor(Color.BLACK);
-			bff.drawRect(anim.getX(), anim.getY(), 32, 48);			
+				
+		int resto = 0;
+		if(animaciones.size() > 0) {
+			resto = 1;
 		}
-		
 		//Pintar las cartas que tiene el jugador principal
-		for(int i=0; i<jg.getMano().getCartas().size(); i++) {
+		for(int i=0; i<jg.getMano().getCartas().size()-resto; i++) {
 			//Coger la carta correspondiente y calcular su posición
 			Carta c = jg.getMano().getCartas().get(i);
 			int x1 = getWidth()/2-128 + 34*i;
@@ -112,7 +108,7 @@ public class Pantalla extends JFrame implements MouseListener, KeyListener {
 		
 		//Pintar las cartas que tiene la casa 
 		//(Aquí no hace falta recoger el objeto de la carta ya que no hace falta pintar el palo ni el numero)
-		for(int i=0; i<jg.getCasa().getCartas().size(); i++) {
+		for(int i=0; i<jg.getCasa().getCartas().size()-resto; i++) {
 			//Calcular su posición
 			int x1 = getWidth()/2-128 + 34*i;
 			int y1 = getHeight()/2-200 + 64;
@@ -124,6 +120,14 @@ public class Pantalla extends JFrame implements MouseListener, KeyListener {
 			//Pintar el borde de la carta
 			bff.setColor(Color.BLACK);
 			bff.drawRect(x1, y1, 32, 48);
+		}
+		
+		//Animar las cartas
+		for(Animacion anim : animaciones) {			
+			bff.setColor(new Color(126, 0, 0));
+			bff.fillRect(anim.getX(), anim.getY(), 32, 48);
+			bff.setColor(Color.BLACK);
+			bff.drawRect(anim.getX(), anim.getY(), 32, 48);			
 		}
 		
 		//Pintar los puntos que lleva el jugador principal
