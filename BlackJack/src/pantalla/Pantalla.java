@@ -28,6 +28,7 @@ public class Pantalla extends JFrame implements MouseListener, KeyListener {
 	private Juego jg;
 	//ArrayList con los botones a pintar
 	private List<Boton> botones;
+	private List<Animacion> animaciones;
 	private BufferedImage bf;
 	//Bandera para ver si el juego ha terminado
 	private boolean terminado;
@@ -37,6 +38,7 @@ public class Pantalla extends JFrame implements MouseListener, KeyListener {
 	public Pantalla(Juego jg) {
 		this.jg = jg;
 		botones = new ArrayList<Boton>();
+		animaciones = new ArrayList<Animacion>();
 		terminado = false;
 		botonReset = null;
 		
@@ -74,6 +76,14 @@ public class Pantalla extends JFrame implements MouseListener, KeyListener {
 			bff.fillRect(x1, y1, 32, 48);
 			bff.setColor(Color.BLACK);
 			bff.drawRect(x1, y1, 32, 48);
+		}		
+		
+		//Animar las cartas
+		for(Animacion anim : animaciones) {			
+			bff.setColor(new Color(126, 0, 0));
+			bff.fillRect(anim.getX(), anim.getY(), 32, 48);
+			bff.setColor(Color.BLACK);
+			bff.drawRect(anim.getX(), anim.getY(), 32, 48);			
 		}
 		
 		//Pintar las cartas que tiene el jugador principal
@@ -100,7 +110,7 @@ public class Pantalla extends JFrame implements MouseListener, KeyListener {
 			bff.drawRect(x1, y1, 32, 48);
 		}
 		
-		//Pitnar las cartas que tiene la casa 
+		//Pintar las cartas que tiene la casa 
 		//(Aquí no hace falta recoger el objeto de la carta ya que no hace falta pintar el palo ni el numero)
 		for(int i=0; i<jg.getCasa().getCartas().size(); i++) {
 			//Calcular su posición
@@ -190,6 +200,26 @@ public class Pantalla extends JFrame implements MouseListener, KeyListener {
 		g.drawImage(bf, 0, 0, null);
 	}
 	
+	//Crear nueva animacion
+	private void animar(boolean jugador) {
+		//Coger posición más alta del mazo
+		int xInicio = getWidth()/2+48;
+		int yInicio = getHeight()/2-(2*(jg.getMazo().size()));
+		int xFin;
+		int yFin;
+		//Coger posición destino de la carta
+		if(!jugador) {
+			xFin = getWidth()/2-128 + 34*(jg.getCasa().getCartas().size());
+			yFin = getHeight()/2-200 + 64;
+		} else {			
+			xFin = getWidth()/2-128 + 34*(jg.getMano().getCartas().size());
+			yFin = getHeight()/2 + 64;			
+		}
+		//Crear animacion
+		Animacion anim = new Animacion(xInicio, yInicio, xFin, yFin, this);
+		animaciones.add(anim);
+	}
+	
 	//Hacer que la casa coja una carta (Si puede)
 	private boolean turnoCasa() {
 		boolean res = false;
@@ -198,6 +228,7 @@ public class Pantalla extends JFrame implements MouseListener, KeyListener {
 			int rnd = (int) (Math.random()*jg.getMazo().size());
 			Carta c = jg.getMazo().get(rnd);
 			//Quitar la carta del mazo y ponerla en la mano de la casa
+			animar(false);
 			jg.getMazo().remove(rnd);
 			jg.getCasa().getCartas().add(c);
 			res = true;
@@ -213,8 +244,9 @@ public class Pantalla extends JFrame implements MouseListener, KeyListener {
 			int rnd = (int) (Math.random()*jg.getMazo().size());
 			Carta c = jg.getMazo().get(rnd);
 			//Quitar la carta del mazo y ponerla en la mano del jugador
+			animar(true);
 			jg.getMazo().remove(rnd);
-			jg.getMano().getCartas().add(c);
+			jg.getMano().getCartas().add(c);			
 			//Comprobar si se ha pasado de puntos
 			if(jg.getMano().getPuntos() >= 21) {
 				terminado = true;
@@ -226,13 +258,14 @@ public class Pantalla extends JFrame implements MouseListener, KeyListener {
 		} else if(terminado && b.getAccion().endsWith("REINICIAR")) {
 			//Reiniciar las variables necesarias
 			botones = new ArrayList<Boton>();
+			animaciones = new ArrayList<Animacion>();
 			terminado = false;
 			botonReset = null;
 			//Llamar al método inicializar de la clase Juego
 			jg.inicializar();
 			//Meter los botones de repartir y plantarse
-			Boton boton = new Boton(getWidth()/2+200, getHeight()/2, 110, 30, "REPARTIR");
-			Boton boton2 = new Boton(getWidth()/2+200, getHeight()/2-60, 115, 30, "PLANTARSE");
+			Boton boton = new Boton(getWidth()/2+200, getHeight()/2-60, 110, 30, "REPARTIR");
+			Boton boton2 = new Boton(getWidth()/2+200, getHeight()/2, 115, 30, "PLANTARSE");
 			meterBoton(boton);
 			meterBoton(boton2);
 			//Salir para evitar que la casa haga su turno ahora
@@ -244,6 +277,10 @@ public class Pantalla extends JFrame implements MouseListener, KeyListener {
 			botones.add(botonReset);
 		}
 		turnoCasa();		
+	}
+	
+	public void quitarAnim(Animacion anim) {
+		animaciones.remove(anim);
 	}
 	
 	public void meterBoton(Boton boton) {
