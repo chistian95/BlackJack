@@ -16,17 +16,21 @@ public class Juego {
 	private Pantalla pt;
 	
 	Juego() {
-		mazo = new ArrayList<Carta>();
-		mano = new Jugador();
-		casa = new Jugador();
-		crearMazo();
-		barajar();
+		inicializar();
 		pt = new Pantalla(this);
 		
 		Boton boton = new Boton(pt.getWidth()/2+200, pt.getHeight()/2, 110, 30, "REPARTIR");
 		Boton boton2 = new Boton(pt.getWidth()/2+200, pt.getHeight()/2-60, 115, 30, "PLANTARSE");
 		pt.meterBoton(boton);
 		pt.meterBoton(boton2);
+	}
+	
+	public void inicializar() {
+		mazo = new ArrayList<Carta>();
+		mano = new Jugador();
+		casa = new Jugador();
+		crearMazo();
+		barajar();
 	}
 	
 	private void crearMazo() {

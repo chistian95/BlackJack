@@ -29,11 +29,13 @@ public class Pantalla extends JFrame implements MouseListener, KeyListener {
 	private List<Boton> botones;
 	private BufferedImage bf;
 	private boolean terminado;
+	private Boton botonReset;
 
 	public Pantalla(Juego jg) {
 		this.jg = jg;
 		botones = new ArrayList<Boton>();
 		terminado = false;
+		botonReset = null;
 		
 		setUndecorated(true);
         setSize(720, 480);
@@ -102,7 +104,7 @@ public class Pantalla extends JFrame implements MouseListener, KeyListener {
 				
 		for(Boton boton : botones) {
 			bff.setColor(new Color(0, 0, 126));
-			if(terminado) {
+			if(terminado && !boton.getAccion().equals("REINICIAR")) {
 				bff.setColor(new Color(64, 64, 64));
 			}			
 			bff.fillRect(boton.getX(), boton.getY(), boton.getDX(), boton.getDY());
@@ -176,6 +178,19 @@ public class Pantalla extends JFrame implements MouseListener, KeyListener {
 			}			
 		} else if(!terminado && b.getAccion().equals("PLANTARSE")) {
 			terminado = true;
+		} else if(terminado && b.getAccion().endsWith("REINICIAR")) {
+			botones = new ArrayList<Boton>();
+			terminado = false;
+			botonReset = null;
+			jg.inicializar();
+			Boton boton = new Boton(getWidth()/2+200, getHeight()/2, 110, 30, "REPARTIR");
+			Boton boton2 = new Boton(getWidth()/2+200, getHeight()/2-60, 115, 30, "PLANTARSE");
+			meterBoton(boton);
+			meterBoton(boton2);
+		}
+		if(terminado && botonReset == null) {
+			botonReset = new Boton(getWidth()/2+200, getHeight()/2+60, 110, 30, "REINICIAR");
+			botones.add(botonReset);
 		}
 		turnoCasa();		
 	}
@@ -189,6 +204,7 @@ public class Pantalla extends JFrame implements MouseListener, KeyListener {
 		for(Boton boton : botones) {
 			if(e.getX() >= boton.getX() && e.getX() <= boton.getX()+boton.getDX() && e.getY() >= boton.getY() && e.getY() <= boton.getY()+boton.getDY()) {
 				pulsarBoton(boton);
+				break;
 			}
 		}
 	}
